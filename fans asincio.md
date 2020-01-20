@@ -449,7 +449,8 @@ async def main():
 
 
 start_time = time()
-loop = asyncio.get_event_loop()
+loop = asyncio.get_running_loop()
+
 loop_time = loop.time()
 loop.call_later(2.5, loader, "loop", start_time)
 loop.call_at(loop_time + 2.5, loader, "loop", start_time)
