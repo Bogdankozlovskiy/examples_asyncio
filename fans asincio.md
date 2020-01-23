@@ -694,3 +694,4 @@ await main()
     Data from page 2  News
     Data from page 3  News
     
+# Simple async server
