@@ -702,20 +702,26 @@ import aioreloader
 import argparse
 import aiohttp_jinja2
 import jinja2
+import logging
+
+
+parser = argparse.ArgumentParser(description="Best project")
+parser.add_argument('--host', help='Host to listen', default='0.0.0.0')
+parser.add_argument('--port', help='Port to accept connections', default='8080')
+parser.add_argument('--reload', action='store_true', help='Autoreload code on change')
+
+args = parser.parse_args()
+
+if args.reload:
+	aioreloader.start()
+
+
+jinja_env = aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader("./"), context_processors=[aiohttp_jinja2.request_processor])
 
 async def handler(request):
     name = request.match_info.get('name', "Anonymous user")
     text = "Hello, " + name
     return web.Response(text=text)
-
-app = web.Application()
-
-jinja_env = aiohttp_jinja2.setup(
-    app, 
-    loader=jinja2.FileSystemLoader("./"),
-    context_processors=[aiohttp_jinja2.request_processor], )
-
-
 
 class Index(web.View):
     @aiohttp_jinja2.template('template_name.html')
@@ -727,10 +733,11 @@ routes = (
 		dict(method='GET', path='/index', handler=Index, name='index'),
 		dict(method="GET", path="/{name}", handler=handler, name="with_name"),
 	)
-
+	
+app = web.Application()
 for route in routes:
     app.router.add_route(**route)
 
 
-web.run_app(app)
+web.run_app(app, host=args.host, port=args.port)
 ```
