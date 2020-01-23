@@ -715,7 +715,7 @@ args = parser.parse_args()
 if args.reload:
 	aioreloader.start()
 
-
+app = web.Application()
 jinja_env = aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader("./"), context_processors=[aiohttp_jinja2.request_processor])
 
 async def handler(request):
@@ -733,8 +733,7 @@ routes = (
 		dict(method='GET', path='/index', handler=Index, name='index'),
 		dict(method="GET", path="/{name}", handler=handler, name="with_name"),
 	)
-	
-app = web.Application()
+
 for route in routes:
     app.router.add_route(**route)
 
