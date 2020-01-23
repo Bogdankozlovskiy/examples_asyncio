@@ -695,3 +695,40 @@ await main()
     Data from page 3  News
     
 # Simple async server
+
+```python
+from aiohttp import web
+import aioreloader
+import argparse
+
+async def handler(request):
+    name = request.match_info.get('name', "Anonymous user")
+    text = "Hello, " + name
+    return web.Response(text=text)
+
+app = web.Application()
+
+jinja_env = aiohttp_jinja2.setup(
+    app, 
+    loader=jinja2.FileSystemLoader("./"),
+    context_processors=[aiohttp_jinja2.request_processor], )
+
+
+
+class Index(web.View):
+    @aiohttp_jinja2.template('template_name.html')
+    async def get(self):
+        return {'foo': 'boo'}
+
+routes = (
+		dict(method="GET", path="/", handler=handler, name="main"),
+		dict(method='GET', path='/index', handler=Index, name='index'),
+		dict(method="GET", path="/{name}", handler=handler, name="with_name"),
+	)
+
+for route in routes:
+    app.router.add_route(**route)
+
+
+web.run_app(app)
+```
