@@ -701,6 +701,7 @@ from aiohttp import web
 import aioreloader
 import argparse
 import aiohttp_jinja2
+import jinja2
 
 async def handler(request):
     name = request.match_info.get('name', "Anonymous user")
